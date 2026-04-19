@@ -1,0 +1,258 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #0f0f1a;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* --- LOGIN SCREEN --- */
+.login-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #0f0f1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.login-box {
+    background: #1a1a2e;
+    padding: 2.5rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.lock-icon { font-size: 3rem; margin-bottom: 0.5rem; color: #f2a900; }
+.login-box h1 { margin-bottom: 2rem; color: #f2a900; }
+.login-box input {
+    width: 100%;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid #2a2a4e;
+    background: #0f0f1a;
+    color: white;
+    font-size: 1rem;
+}
+.btn-login {
+    width: 100%;
+    padding: 1rem;
+    background: #f2a900;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-login:hover { background: #ffb700; }
+.error-text { color: #ff4444; margin-top: 1rem; }
+
+/* --- HEADER & NAV --- */
+.header {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #2a2a4e;
+}
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f2a900;
+    cursor: pointer;
+}
+.back-btn {
+    background: #2a2a4e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.search-container { position: relative; width: 300px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
+#searchInput {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    border-radius: 20px;
+    border: none;
+    background: #1a1a2e;
+    color: white;
+}
+.user-info { display: flex; align-items: center; gap: 1rem; }
+.btn-logout { background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+
+.nav-menu {
+    background: #1a1a2e;
+    padding: 0 5%;
+    border-bottom: 1px solid #2a2a4e;
+}
+.nav-menu ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+.nav-menu a {
+    color: #ccc;
+    text-decoration: none;
+    padding: 1rem 0;
+    display: inline-block;
+    border-bottom: 2px solid transparent;
+}
+.nav-menu a.active { color: #f2a900; border-bottom-color: #f2a900; }
+
+/* --- MAIN & GRID --- */
+.container { padding: 2rem 5%; }
+.section-title { margin: 1rem 0; border-left: 4px solid #f2a900; padding-left: 1rem; }
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+.media-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.media-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(242, 169, 0, 0.2); }
+.media-thumb { width: 100%; height: 250px; object-fit: cover; background: #2a2a4e; }
+.media-info { padding: 0.8rem; }
+.media-title { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.media-type { font-size: 0.8rem; color: #f2a900; }
+
+/* --- ADMIN PANEL --- */
+.admin-panel { background: #1a1a2e; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }
+.new-user-form { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+.new-user-form input, .new-user-form select {
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #2a2a4e;
+    background: #0f0f1a;
+    color: white;
+}
+#usersList { list-style: none; margin-top: 1rem; }
+#usersList li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #2a2a4e;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* --- IPTV --- */
+.iptv-config {
+    background: #1a1a2e;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+.iptv-config input { flex: 1; padding: 0.8rem; border-radius: 8px; border: none; background: #0f0f1a; color: white; }
+.iptv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+.iptv-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.iptv-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(242, 169, 0, 0.2); }
+.iptv-logo { width: 70px; height: 70px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 50%; background: #0f0f1a; padding: 5px; }
+
+/* --- FILE MANAGER --- */
+.upload-area {
+    background: #1a1a2e;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1a1a2e;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.file-table th, .file-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2a2a4e;
+}
+.file-table th { background: #0f0f1a; color: #f2a900; }
+.btn-rename, .btn-delete {
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+.btn-rename { background: #f2a900; color: black; }
+.btn-delete { background: #dc3545; color: white; }
+
+/* --- MODAL PLAYER --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.95);
+}
+.modal-content {
+    position: relative;
+    margin: auto;
+    width: 90%;
+    max-width: 900px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.close {
+    position: absolute;
+    top: -40px; right: 0;
+    color: #f2a900;
+    font-size: 2rem;
+    cursor: pointer;
+}
+#videoPlayer { width: 100%; border-radius: 8px; }
+.player-title { color: white; margin-top: 0.5rem; font-weight: 500; }
+
+/* --- UTILS --- */
+.hidden { display: none; }
+.btn-primary {
+    background: #f2a900;
+    color: black;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.breadcrumbs { margin-bottom: 1rem; color: #ccc; cursor: pointer; }
