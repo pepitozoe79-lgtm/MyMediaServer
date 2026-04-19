@@ -36,29 +36,30 @@ Ideal para montar un cine en casa usando una Raspberry Pi, un servidor Windows o
 
 ## 🚀 Instalación y Uso
 
+### Opción A: Instalación Manual (Windows, macOS, Linux)
 Solo necesitas tener `Node.js` instalado en tu sistema.
 
-### 1. Clonar el Repositorio
+#### 1. Clonar el Repositorio
 Abre tu terminal y clona este proyecto:
 ```bash
 git clone https://github.com/pepitozoe79-lgtm/MyMediaServer.git
 cd MyMediaServer
 ```
 
-### 2. Instalar Dependencias
+#### 2. Instalar Dependencias
 Instala los paquetes necesarios del proyecto:
 ```bash
 npm install
 ```
 
-### 3. Iniciar el Servidor
+#### 3. Iniciar el Servidor
 Inicia la aplicación:
 ```bash
 npm start
 ```
 *También puedes usar `npm run dev` si estás modificando el código y quieres que se reinicie solo al guardar cambios.*
 
-### 4. Acceder
+#### 4. Acceder
 Abre tu navegador y ve a:
 ```
 http://localhost:3000
@@ -68,6 +69,19 @@ http://localhost:3000
 > **Contraseña:** `admin123`
 
 *(Te recomendamos cambiar las credenciales o crear un nuevo usuario administrador desde el Panel de Control una vez ingreses).*
+
+---
+
+### Opción B: Despliegue Automatizado (Debian / Ubuntu)
+Para entornos de producción o VPS (Debian 12/13, Ubuntu Server), puedes instalar, descargar y configurar todo el proyecto de manera automática con un **solo comando** (al más puro estilo CasaOS). Este comando descargará Node.js, instalará las dependencias y dejará un servicio `systemd` corriendo 24/7.
+
+Abre la terminal de tu servidor y ejecuta:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main/install.sh | sudo bash
+```
+
+El script se encargará de todo y al concluir te mostrará la IP en la que el puerto `3000` está escuchando. Te proporcionará también comandos útiles de `systemctl` para gestionar el servicio en el futuro.
 
 ---
 
