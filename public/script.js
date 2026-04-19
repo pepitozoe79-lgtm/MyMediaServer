@@ -320,13 +320,58 @@ async function loadFilesList(dirPath = null) {
         tbody.appendChild(tr);
     });
 }
-async function uploadFile() {
+function uploadFile() {
     const input = document.getElementById('fileInput');
+    if (input.files.length === 0) return alert('Selecciona al menos un archivo');
+    
     const formData = new FormData();
     for (let f of input.files) formData.append('file', f);
     if (currentExplorerPath) formData.append('path', currentExplorerPath);
-    await fetch('/api/upload', { method: 'POST', body: formData });
-    loadFilesList(currentExplorerPath);
+    
+    // UI Progress Elements
+    const container = document.getElementById('uploadProgressContainer');
+    const bar = document.getElementById('uploadProgressBar');
+    const percentageText = document.getElementById('uploadPercentageText');
+    const statusText = document.getElementById('uploadStatusText');
+    
+    container.style.display = 'block';
+    
+    const xhr = new XMLHttpRequest();
+    
+    xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            bar.style.width = percent + '%';
+            percentageText.innerText = percent + '%';
+            statusText.innerText = `Subiendo ${input.files.length} archivo(s)...`;
+        }
+    };
+    
+    xhr.onload = () => {
+        if (xhr.status === 200) {
+            statusText.innerText = '¡Carga completada!';
+            bar.style.backgroundColor = '#28a745'; // Verde éxito
+            setTimeout(() => {
+                container.style.display = 'none';
+                bar.style.width = '0%';
+                bar.style.backgroundColor = 'var(--accent)';
+                loadFilesList(currentExplorerPath);
+            }, 2000);
+        } else {
+            alert('Error al subir: ' + xhr.statusText);
+            container.style.display = 'none';
+        }
+    };
+    
+    xhr.onerror = () => {
+        alert('Error de conexión al subir');
+        container.style.display = 'none';
+    };
+    
+    xhr.open('POST', '/api/upload', true);
+    xhr.send(formData);
+    
+    input.value = ''; // limpiar input
 }
 async function deleteFile(path) {
     if (!confirm('¿Eliminar archivo?')) return;

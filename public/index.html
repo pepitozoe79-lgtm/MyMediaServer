@@ -109,6 +109,16 @@
                 <input type="file" id="fileInput" multiple>
                 <button class="btn-primary" onclick="uploadFile()">Subir Archivos</button>
             </div>
+            
+            <div id="uploadProgressContainer" style="display:none; margin-bottom: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span id="uploadStatusText" style="font-weight: 500;">Subiendo archivos...</span>
+                    <span id="uploadPercentageText" style="color: var(--accent);">0%</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden;">
+                    <div id="uploadProgressBar" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.3s ease;"></div>
+                </div>
+            </div>
             <table class="file-table">
                 <thead>
                     <tr>
