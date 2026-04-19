@@ -3,7 +3,8 @@
 # Colores para la salida
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+RED='\033[0;31m'
+NC='\033[0m'
 
 echo -e "${YELLOW}🚀 Iniciando instalación de MyMediaServer...${NC}"
 
@@ -26,7 +27,9 @@ echo -e "${GREEN}✅ npm $(npm --version)${NC}"
 
 # 4. Instalar dependencias del proyecto
 echo -e "${GREEN}📚 Instalando módulos npm del proyecto...${NC}"
-npm install
+# Limpiar instalaciones previas para evitar error idealTree de NPM
+rm -rf node_modules package-lock.json
+npm install --production
 
 # 5. Crear archivo de servicio systemd
 echo -e "${GREEN}⚙️ Configurando servicio systemd para MyMediaServer...${NC}"
@@ -58,9 +61,8 @@ sudo systemctl enable mymediaserver.service
 sudo systemctl start mymediaserver.service
 
 # 6. Configurar firewall (opcional)
-read -p "¿Deseas abrir el puerto 3000 en el firewall (UFW)? (s/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Ss]$ ]]; then
+if command -v ufw > /dev/null; then
+    echo -e "${YELLOW}🛡️  Configurando Firewall...${NC}"
     sudo ufw allow 3000/tcp
     echo -e "${GREEN}✅ Puerto 3000 abierto.${NC}"
 fi
