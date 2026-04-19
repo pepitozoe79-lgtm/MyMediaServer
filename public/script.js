@@ -407,10 +407,30 @@ async function createUser() {
     });
     loadUsersList();
 }
-async function deleteUser(id) {
-    if(!confirm('¿Eliminar usuario?')) return;
-    await fetch(`/api/users/${id}`, { method: 'DELETE' });
-    loadUsersList();
+async function updateServer() {
+    if (!confirm('¿Seguro que deseas actualizar el servidor? Buscará cambios en GitHub y se reiniciará.')) return;
+    
+    const btn = document.querySelector('button[onclick="updateServer()"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/api/admin/update', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            alert('¡Actualización exitosa! El servidor se está reiniciando. Espera unos segundos y refresca la página.');
+            setTimeout(() => location.reload(), 5000);
+        } else {
+            alert('Error al actualizar: ' + data.error);
+        }
+    } catch (e) {
+        alert('Cercando la conexión: El servidor se está reiniciando...');
+        setTimeout(() => location.reload(), 5000);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
 
 window.onclick = (e) => { if (e.target == modal) closePlayer(); };

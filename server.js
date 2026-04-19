@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const fileUpload = require('express-fileupload');
 const bcrypt = require('bcryptjs');
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -100,6 +101,18 @@ app.delete('/api/users/:id', (req, res) => {
     users = users.filter(u => u.id != req.params.id);
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
     res.json({ success: true });
+});
+
+app.post('/api/admin/update', (req, res) => {
+    console.log('🔄 Solicitud de actualización recibida...');
+    exec('bash update.sh', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`❌ Error en actualización: ${error.message}`);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+        console.log(`✅ Resultado actualización: ${stdout}`);
+        res.json({ success: true, output: stdout });
+    });
 });
 
 // ==============================================
