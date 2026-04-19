@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyMediaServer</title>
+    <title>MyMediaServer - Premium VOD</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f0f1a'/%3E%3Ctext x='50%25' y='65%25' font-size='50' text-anchor='middle' fill='%23f2a900'%3E📺%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23e50914'/%3E%3Ctext x='50%25' y='65%25' font-size='50' text-anchor='middle' fill='white'%3E📺%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
 <!-- 🔐 LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
     <div class="login-box">
-        <div class="lock-icon">🔐</div>
+        <div class="lock-icon"><i class="fas fa-lock"></i></div>
         <h1>MyMediaServer</h1>
         <input type="text" id="loginUser" placeholder="Usuario" value="admin">
         <input type="password" id="loginPass" placeholder="Contraseña" value="admin123">
@@ -23,133 +23,101 @@
     </div>
 </div>
 
-<div class="app-container" style="display: none;" id="appContainer">
-    <!-- BARRA LATERAL IZQUIERDA -->
-    <aside class="sidebar">
-        <div class="sidebar-top">
-            <a href="#" class="nav-icon active" onclick="showHome(); return false;" title="Inicio"><i class="fas fa-home"></i></a>
-            <a href="#" class="nav-icon" title="Reproductor"><i class="fas fa-play-circle"></i></a>
-            <a href="#" class="nav-icon" title="Ajustes"><i class="fas fa-cog"></i></a>
-            <a href="#" class="nav-icon" title="Live TV" onclick="showIPTV(); return false;"><i class="fas fa-broadcast-tower"></i></a>
+<div id="appContainer" style="display: none;">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo" onclick="showHome()">MyMediaServer</div>
+            <button id="backBtn" class="back-btn" onclick="goBack()" style="display:none;">
+                <i class="fas fa-arrow-left"></i> Atrás
+            </button>
         </div>
-        <div class="sidebar-bottom">
-            <a href="#" class="nav-icon" title="Gestor de Archivos" onclick="toggleView(); return false;"><i class="fas fa-folder-open"></i></a>
-            <a href="#" class="nav-icon" title="Perfil"><i class="fas fa-user-circle"></i></a>
-            <a href="#" class="nav-icon" title="Lista"><i class="fas fa-list-ul"></i></a>
-            <a href="#" class="nav-icon" title="Más"><i class="fas fa-ellipsis-h"></i></a>
+
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search movies, shows..." onkeyup="searchMedia()">
         </div>
-    </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main-content">
-        <!-- Hero Background Faded -->
-        <div class="hero-bg bg-image-keanu"></div>
-        <div class="hero-overlay"></div>
+        <div class="user-info">
+            <span id="currentUserText">Administrator</span>
+            <button onclick="logout()" class="btn-logout" title="Cerrar sesión">Logout</button>
+        </div>
+    </header>
 
-        <!-- BARRA SUPERIOR (GLASSMORPHISM) -->
-        <header class="topbar">
-            <!-- Logo -->
-            <div class="logo" onclick="showHome()">
-                <i class="fas fa-tv" style="color: #f2a900; margin-right: 8px;"></i> <span style="color: #f2a900;">MyMediaServer</span>
+    <!-- NAV MENU -->
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="#" class="active" id="navHome" onclick="showHome(); return false;">Inicio</a></li>
+            <li><a href="#" id="navIPTV" onclick="showIPTV(); return false;">Live TV</a></li>
+            <li><a href="#" id="navFiles" onclick="toggleView(); return false;">Archivos</a></li>
+            <li id="navAdminItem" style="display: none;"><a href="#" onclick="showAdmin(); return false;">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- Panel de Administración -->
+        <div id="adminPanel" style="display:none;" class="admin-panel">
+            <h2 class="section-title"><i class="fas fa-users-cog"></i> Gestión de Usuarios</h2>
+            <div class="new-user-form">
+                <input type="text" id="newUser" placeholder="Usuario">
+                <input type="password" id="newPass" placeholder="Contraseña">
+                <input type="text" id="newName" placeholder="Nombre completo">
+                <select id="newRole">
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+                <button class="btn-primary" onclick="createUser()">Crear Usuario</button>
             </div>
-            
-            <!-- Categorías centrales -->
-            <nav class="categories-nav">
-                <a href="#" class="cat-link active" onclick="document.querySelectorAll('.cat-link').forEach(l=>l.classList.remove('active')); this.classList.add('active'); showHome(); return false;"><i class="fas fa-film"></i> Movies</a>
-                <a href="#" class="cat-link" onclick="document.querySelectorAll('.cat-link').forEach(l=>l.classList.remove('active')); this.classList.add('active'); showHome(); return false;"><i class="fas fa-tv"></i> TV Shows</a>
-                <a href="#" class="cat-link" onclick="document.querySelectorAll('.cat-link').forEach(l=>l.classList.remove('active')); this.classList.add('active'); showIPTV(); return false;"><i class="fas fa-satellite-dish"></i> Live TV</a>
-                <a href="#" class="cat-link"><i class="fas fa-music"></i> Music</a>
-            </nav>
+            <h4>Usuarios Activos</h4>
+            <ul id="usersList" style="margin-top: 1rem; list-style: none;"></ul>
+        </div>
 
-            <!-- Búsqueda y Perfil -->
-            <div class="topbar-right">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchMedia()">
-                </div>
-                <div class="profile-box">
-                    <i class="fas fa-user" style="color: #f2a900; margin-right: 8px;"></i>
-                    <span id="currentUserText" style="margin-right: 15px; font-weight: 500; font-size:0.9rem;">Administrator</span>
-                    <button onclick="logout()" class="btn-quit" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></button>
-                </div>
-            </div>
-        </header>
+        <!-- HOME SECTION -->
+        <div id="mediaHomeSection">
+            <div id="breadcrumbs" class="breadcrumbs"></div>
 
-        <!-- ESPACIO DE CONTENIDO CON SCROLL -->
-        <div class="content-scroll">
-            
-            <!-- Panel de Administración -->
-            <div id="adminPanel" style="display:none;" class="full-view-section admin-panel glass-panel">
-                <h3><i class="fas fa-users-cog"></i> Administración de Usuarios</h3>
-                <div class="new-user-form">
-                    <input type="text" id="newUser" placeholder="Usuario">
-                    <input type="password" id="newPass" placeholder="Contraseña">
-                    <input type="text" id="newName" placeholder="Nombre completo">
-                    <select id="newRole">
-                        <option value="user">Usuario</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                    <button onclick="createUser()"><i class="fas fa-plus"></i> Crear</button>
-                </div>
-                <h4>Usuarios existentes:</h4>
-                <ul id="usersList"></ul>
-            </div>
-
-            <!-- HOME SECTION (Library) -->
-            <div id="mediaHomeSection">
-                <!-- Breadcrumbs and Back -->
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                    <button id="backBtn" class="back-btn" onclick="goBack()" style="display:none;"><i class="fas fa-arrow-left"></i> Atrás</button>
-                    <div id="breadcrumbs" class="breadcrumbs"></div>
-                </div>
-
-                <!-- Continue Watching -->
-                <div id="continueWatchingWrapper" style="display:none;">
-                    <h2 class="section-title">Continue Watching</h2>
-                    <div class="continue-grid hz-scroll" id="continueGrid">
-                        <!-- Tarjetas 16:9 irán aquí -->
-                    </div>
-                </div>
-
-                <!-- Recently Added -->
-                <h2 class="section-title mt-4" id="libraryTitle">Recently Added</h2>
-                <div id="mediaGrid" class="grid-container">
-                    <!-- Tarjetas 2:3 tipo póster irán aquí -->
+            <!-- Continue Watching -->
+            <div id="continueWatchingWrapper" style="display:none;">
+                <h2 class="section-title">Seguir viendo</h2>
+                <div class="grid-container" id="continueGrid">
+                    <!-- Tarjetas irán aquí -->
                 </div>
             </div>
 
-            <!-- IPTV SECTION -->
-            <div id="iptvSection" style="display:none;" class="full-view-section">
-                <h2 class="section-title"><i class="fas fa-satellite-dish"></i> Live TV Channels</h2>
-                <div class="iptv-config glass-panel">
-                    <input type="text" id="iptvUrl" placeholder="URL de tu lista .m3u o .m3u8">
-                    <button class="btn-primary" onclick="saveIPTVConfig()"><i class="fas fa-cloud-download-alt"></i> Cargar Lista</button>
-                </div>
-                <div class="iptv-grid" id="iptvGrid"></div>
+            <h2 class="section-title" id="libraryTitle">Biblioteca</h2>
+            <div id="mediaGrid" class="grid-container">
+                <!-- Tarjetas irán aquí -->
             </div>
+        </div>
 
-            <!-- FILE MANAGER SECTION -->
-            <div id="fileManager" style="display:none;" class="full-view-section">
-                <h2 class="section-title"><i class="fas fa-folder"></i> Explorer / File Manager</h2>
-                <div class="upload-area glass-panel">
-                    <input type="file" id="fileInput" multiple>
-                    <button class="btn-primary" onclick="uploadFile()"><i class="fas fa-upload"></i> Subir Archivos</button>
-                </div>
-                <div class="glass-panel" style="padding: 0; overflow:hidden;">
-                    <table class="file-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Tamaño</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fileListBody"></tbody>
-                    </table>
-                </div>
+        <!-- IPTV SECTION -->
+        <div id="iptvSection" style="display:none;">
+            <h2 class="section-title">Televisión en Vivo</h2>
+            <div class="iptv-config">
+                <input type="text" id="iptvUrl" placeholder="URL de la lista M3U">
+                <button class="btn-primary" onclick="saveIPTVConfig()">Cargar Canales</button>
             </div>
+            <div class="iptv-grid" id="iptvGrid"></div>
+        </div>
 
-            <div style="height: 50px;"></div>
+        <!-- FILE MANAGER SECTION -->
+        <div id="fileManager" style="display:none;">
+            <h2 class="section-title">Explorador de Archivos</h2>
+            <div class="upload-area">
+                <input type="file" id="fileInput" multiple>
+                <button class="btn-primary" onclick="uploadFile()">Subir Archivos</button>
+            </div>
+            <table class="file-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tamaño</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="fileListBody"></tbody>
+            </table>
         </div>
     </main>
 </div>
@@ -158,7 +126,7 @@
 <div id="playerModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closePlayer()">&times;</span>
-        <video id="videoPlayer" controls controlsList="nodownload">
+        <video id="videoPlayer" controls>
             <source src="" id="videoSource">
             <track id="subtitleTrack" kind="subtitles" src="" srclang="es" label="Español" default>
         </video>

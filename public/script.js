@@ -53,9 +53,11 @@ async function doLogin() {
     if (data.success) {
         currentUser = data.user;
         loginScreen.style.display = 'none';
-        appContainer.style.display = 'flex'; // Usamos flex para AppContainer global
+        appContainer.style.display = 'block';
         currentUserText.innerText = currentUser.name;
+        
         if (currentUser.role === 'admin') {
+            document.getElementById('navAdminItem').style.display = 'block';
             loadUsersList();
         }
         showHome();
@@ -72,12 +74,16 @@ function hideAllSections() {
     fileManager.style.display = 'none';
     iptvSection.style.display = 'none';
     adminPanel.style.display = 'none';
+    
+    // Reset active nav
+    document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
 }
 
 function showHome() {
     isExplorerView = false;
     hideAllSections();
     mediaHomeSection.style.display = 'block';
+    document.getElementById('navHome').classList.add('active');
     
     currentPath = null;
     navigationHistory = [];
@@ -89,14 +95,21 @@ function toggleView() {
     isExplorerView = true;
     hideAllSections();
     fileManager.style.display = 'block';
-    if(currentUser.role === 'admin') adminPanel.style.display = 'block';
+    document.getElementById('navFiles').classList.add('active');
     loadFilesList();
 }
 
 function showIPTV() {
     hideAllSections();
     iptvSection.style.display = 'block';
+    document.getElementById('navIPTV').classList.add('active');
     loadIPTVChannels();
+}
+
+function showAdmin() {
+    hideAllSections();
+    adminPanel.style.display = 'block';
+    // No specific nav link for admin that highlights, but we can highlight Inicio if we want or nothing
 }
 
 function goBack() {
@@ -119,10 +132,10 @@ async function loadMedia(dirPath = null) {
     allItems = items;
     
     if (dirPath) {
-        continueWatchingWrapper.style.display = 'none'; // ocultar en subcarpetas
-        libraryTitle.innerText = "Contenido de la carpeta";
+        continueWatchingWrapper.style.display = 'none';
+        libraryTitle.innerText = "Directorio: " + formatTitle(dirPath.split(/[\\/]/).pop());
     } else {
-        libraryTitle.innerText = "Recently Added / Library";
+        libraryTitle.innerText = "Biblioteca";
     }
 
     renderMediaGrid(items);
@@ -139,14 +152,14 @@ function renderMediaGrid(items) {
         
         const imgSrc = item.poster || (item.type === 'folder' ? FOLDER_PLACEHOLDER : PLACEHOLDER);
         const niceTitle = formatTitle(item.name);
+        const typeLabel = item.type === 'folder' ? 'Carpeta' : (item.name.match(/\.(mp4|mkv|avi|mov)$/i) ? 'Video' : 'Archivo');
         
         card.innerHTML = `
-            <div class="thumb-wrapper">
-                <img src="${imgSrc}" class="media-thumb" onerror="this.src='${item.type === 'folder' ? FOLDER_PLACEHOLDER : PLACEHOLDER}'">
-                ${item.type === 'folder' ? '<div class="folder-icon"><i class="fas fa-folder"></i></div>' : ''}
-                ${item.hasSubtitles ? '<div class="subs-badge">CC</div>' : ''}
+            <img src="${imgSrc}" class="media-thumb" onerror="this.src='${item.type === 'folder' ? FOLDER_PLACEHOLDER : PLACEHOLDER}'">
+            <div class="media-info">
+                <div class="media-title" title="${item.name}">${niceTitle}</div>
+                <div class="media-type">${typeLabel} ${item.hasSubtitles ? '• CC' : ''}</div>
             </div>
-            <div class="media-title" title="${item.name}">${niceTitle}</div>
         `;
         
         card.onclick = () => {
@@ -167,41 +180,32 @@ function loadContinueWatching() {
     continueGrid.innerHTML = '';
     let found = false;
 
-    // Buscamos en todo el localStorage claves de progreso
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith('progress_')) {
             const rawId = key.split('progress_')[1];
             let path = "";
-            try { path = atob(rawId); } catch(e) { continue; } // ignorar inválidos
+            try { path = atob(rawId); } catch(e) { continue; }
             
             const progInfo = JSON.parse(localStorage.getItem(key));
-            
-            // Si está muy al inicio de la peli, o ya la terminó (queda < 2%), no la mostramos.
             const percentage = (progInfo.time / progInfo.total) * 100;
             if(percentage < 1 || percentage > 98) continue;
             
             found = true;
-            // Para el diseño "Continue watching", creamos la tarjeta 16:9
             const niceTitle = formatTitle(path.split(/[\\/]/).pop());
-            // Extraer poster de progInfo si lo hubimos guardado allí. En este mod lo metemos si es posible.
             const posterUrl = progInfo.poster || PLACEHOLDER;
 
             const card = document.createElement('div');
-            card.className = 'continue-card';
+            card.className = 'media-card'; // We use the same card style for continue watching now
             card.innerHTML = `
-                <img src="${posterUrl}" class="thumb" onerror="this.src='${PLACEHOLDER}'">
-                <div class="overlay-info">
-                    <div class="ep-title">${niceTitle}</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${percentage}%"></div>
-                    </div>
+                <img src="${posterUrl}" class="media-thumb" onerror="this.src='${PLACEHOLDER}'">
+                <div class="media-info">
+                    <div class="media-title">${niceTitle}</div>
+                    <div class="media-type">Continuar (${Math.round(percentage)}%)</div>
                 </div>
             `;
             
             card.onclick = () => {
-                // Al tocar, intentar reproducir. Asume hasSubs=false porque no guardamos estado, pero 
-                // para ser perfectos, leeríamos de DB. Como no hay DB mandamos false por ahora (detectará backend de todas formas si existe .srt igual).
                 playMedia(path, niceTitle, false, posterUrl);
             };
             continueGrid.appendChild(card);
@@ -247,8 +251,6 @@ function playMedia(path, title, hasSubs, posterImgUrl = null) {
     videoPlayer.load();
     videoPlayer.play();
     
-    // Si hay poster pasamos el dato al localstorage temporalmente via variable global o inyectamos.
-    // Usaremos un atributo data en el elemento de video para recolectar eso en el setInterval
     videoPlayer.dataset.posterUrl = posterImgUrl || PLACEHOLDER;
     
     const prog = JSON.parse(localStorage.getItem('progress_' + currentVideoId));
@@ -267,7 +269,6 @@ function closePlayer() {
             poster: videoPlayer.dataset.posterUrl
         };
         localStorage.setItem('progress_' + currentVideoId, JSON.stringify(prog));
-        // actualizar UI al cerrar
         if(!isExplorerView && !currentPath) loadContinueWatching();
     }
     modal.style.display = 'none';
@@ -280,7 +281,6 @@ function formatTime(s) {
     return `${m}:${sec.toString().padStart(2,'0')}`;
 }
 
-// Guardar progreso periódicamente
 setInterval(() => {
     if (currentVideoId && !videoPlayer.paused) {
         const prog = { 
@@ -292,8 +292,7 @@ setInterval(() => {
     }
 }, 5000);
 
-
-// --- FILE MANAGER, USUARIOS (ADMIN), IPTV RESTO FUNCIONES (casi sin cambios) ---
+// --- FILE MANAGER, USUARIOS, IPTV ---
 async function loadFilesList(dirPath = null) {
     currentExplorerPath = dirPath;
     let url = '/api/files';
@@ -381,6 +380,10 @@ async function loadUsersList() {
     list.innerHTML = '';
     users.forEach(u => {
         const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.padding = '0.5rem 0';
+        li.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
         li.innerHTML = `<span>${u.name} (${u.username}) - <b>${u.role}</b></span>`;
         if (u.username !== 'admin') {
             const delBtn = document.createElement('button');
@@ -397,6 +400,7 @@ async function createUser() {
     const password = document.getElementById('newPass').value;
     const name = document.getElementById('newName').value;
     const role = document.getElementById('newRole').value;
+    if(!username || !password || !name) return alert('Completa todos los campos');
     await fetch('/api/users', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, name, role })
@@ -404,6 +408,7 @@ async function createUser() {
     loadUsersList();
 }
 async function deleteUser(id) {
+    if(!confirm('¿Eliminar usuario?')) return;
     await fetch(`/api/users/${id}`, { method: 'DELETE' });
     loadUsersList();
 }
