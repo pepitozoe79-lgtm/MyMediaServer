@@ -90,6 +90,12 @@ curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main
 ```
 *(Nota: Tratar a tus archivos es sagrado. Este comando **no eliminará tus películas ni tus configuraciones privadas**, solo cortará el servidor en la memoria base).*
 
+### Actualización / Reinstalación Limpia
+Si necesitas aplicar actualizaciones recientes de código forzando un reinicio total de los flujos de instalación sin comprometer tus películas, usa este comando encadenado:
+```bash
+curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main/uninstall.sh | sudo bash && curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main/install.sh | sudo bash
+```
+
 ---
 
 ## 📂 Estructura de Directorios
