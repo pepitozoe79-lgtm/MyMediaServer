@@ -2,7 +2,7 @@
 Write-Host "Iniciando guardado e interacción con GitHub..." -ForegroundColor Cyan
 
 git add .
-git commit -m "Rediseño completo de la UI premium y comando de instalación curl estilo CasaOS"
+git commit -m "Añadidos scripts automáticos de instalación y desinstalación para Linux, y rediseño de UI."
 git push origin main
 
 Write-Host "¡Repositorio actualizado exitosamente!" -ForegroundColor Green

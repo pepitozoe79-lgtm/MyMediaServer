@@ -83,6 +83,13 @@ curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main
 
 El script se encargará de todo y al concluir te mostrará la IP en la que el puerto `3000` está escuchando. Te proporcionará también comandos útiles de `systemctl` para gestionar el servicio en el futuro.
 
+### Desinstalación Automática
+De forma tan simple como se instala, si alguna vez necesitas detener, desenlazar permanentemente del sistema (`systemd`) y limpiar las reglas de tu servidor, solo ejecuta:
+```bash
+curl -fsSL https://raw.githubusercontent.com/pepitozoe79-lgtm/MyMediaServer/main/uninstall.sh | sudo bash
+```
+*(Nota: Tratar a tus archivos es sagrado. Este comando **no eliminará tus películas ni tus configuraciones privadas**, solo cortará el servidor en la memoria base).*
+
 ---
 
 ## 📂 Estructura de Directorios
